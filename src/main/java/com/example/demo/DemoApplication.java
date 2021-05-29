@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootApplication
-@ComponentScan({"com.example.demo"})
+@ComponentScan({ "com.example.demo" })
 @Slf4j
 public class DemoApplication {
 

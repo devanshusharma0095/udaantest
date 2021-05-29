@@ -28,7 +28,7 @@ public class AttendanceController {
 	}
 
 	@GetMapping("/day")
-	public ResponseEntity<List<DayAttendanceResponse>> getAttendanceByDay(@RequestParam("date") String day) throws Exception {
+	public ResponseEntity<DayAttendanceResponse> getAttendanceByDay(@RequestParam("date") String day) throws Exception {
 		return ResponseEntity.ok().body(attendanceService.getAttendanceByDay(day));
 	}
 }

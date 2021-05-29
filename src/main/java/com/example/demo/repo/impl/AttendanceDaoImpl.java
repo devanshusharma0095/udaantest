@@ -7,6 +7,9 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -30,11 +33,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	}
 
 	public Attendance getAttendanceByDayAndStudent(Date day, Student s) {
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Attendance> criteriaQuery = cb.createQuery(Attendance.class);
-		Root<Attendance> root = criteriaQuery.from(Attendance.class);
-		criteriaQuery.select(root).where(cb.and(cb.equal(root.get("date"), day),cb.equal(root.get("student"), s)));
-		TypedQuery<Attendance> q = entityManager.createQuery(criteriaQuery);
-		return q.getSingleResult();
+		Session session = (Session) entityManager.getDelegate();
+		Criteria criteria = session.createCriteria(Attendance.class);
+		criteria.add(Restrictions.eq("date", day)).add(Restrictions.eq("student.id", s.getId()));
+		return (Attendance) criteria.uniqueResult();
 	}
 }

@@ -24,26 +24,37 @@ public class AttendanceService {
 	private StudentRepo studentRepo;
 
 	public String saveAttendance(AttendanceRequest request) throws ParseException {
-		Student student = new Student();
-		student.setEmail(request.getEmail());
-		student = studentRepo.save(student);
+		Student student = studentRepo.getStudentByEmail(request.getEmail());
+		if (Objects.isNull(student)) {
+			student = new Student();
+			student.setEmail(request.getEmail());
+			student = studentRepo.save(student);
+		}
 		Date date = getParseDate(request.getDate());
 		if (Objects.nonNull(date)) {
-				Attendance attendance = new Attendance(date, request.getPresent(), student);
+			Attendance attendance = attendanceRepo.getAttendanceByDayAndStudent(date, student);
+			if (Objects.isNull(attendance)) {
+				attendance = new Attendance(date, request.getPresent(), student);
 				attendanceRepo.save(attendance);
 				return "Success";
-
-		} else {
+			}
+			else {
+				return "Already Recorded";
+			}
+		}
+		else {
 			return "Invalid Date";
 		}
 	}
 
-	public List<DayAttendanceResponse> getAttendanceByDay(String strDate) throws Exception {
+	public DayAttendanceResponse getAttendanceByDay(String strDate) throws Exception {
 		Date date = getParseDate(strDate);
 		if (Objects.nonNull(date)) {
 			List<Attendance> attendanceList = attendanceRepo.getAttendanceByDay(date);
-			return attendanceList.stream().map(DayAttendanceResponse::new).collect(Collectors.toList());
-		} else {
+			List<String> emails = attendanceList.stream().map(Attendance::getStudent).map(Student::getEmail).collect(Collectors.toList());
+			return new DayAttendanceResponse(emails);
+		}
+		else {
 			throw new Exception("not Valid date");
 		}
 	}

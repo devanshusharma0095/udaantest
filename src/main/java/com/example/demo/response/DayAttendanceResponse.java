@@ -1,8 +1,7 @@
 package com.example.demo.response;
 
-import java.util.Date;
+import java.util.List;
 
-import com.example.demo.entity.Attendance;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,13 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DayAttendanceResponse {
 
-	private String email;
-	private int present;
-	private Date date;
+	private List<String> email;
+	private int count;
 
-	public DayAttendanceResponse(Attendance attendance) {
-		email = attendance.getStudent().getEmail();
-		present = attendance.getPresent();
-		date = attendance.getDate();
+	public DayAttendanceResponse(List<String> email) {
+		this.email = email;
+		this.count = email.size();
 	}
 }
